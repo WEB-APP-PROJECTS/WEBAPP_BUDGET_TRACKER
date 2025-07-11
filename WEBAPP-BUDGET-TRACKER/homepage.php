@@ -78,10 +78,10 @@ foreach ($budgetLabels as $index => $name) {
   </div>
 
   <footer class="nav-bar">
-    <a href="home.php" title="Home"><i class="fas fa-home"></i></a>
-    <a href="add_transaction.php" title="Add Transaction"><i class="fas fa-plus-circle"></i></a>
-    <a href="view_transactions.php" title="View Transactions"><i class="fas fa-receipt"></i></a>
-    <a href="profile.php" title="User Profile"><i class="fas fa-user-circle"></i></a>
+    <a href="homepage.php" title="Home"><i class="fas fa-home"></i></a>
+    <a href="Add_Transactions.html" title="Add Transaction"><i class="fas fa-plus-circle"></i></a>
+    <a href="view-transactions.php" title="View Transactions"><i class="fas fa-receipt"></i></a>
+    <a href="profile.html" title="User Profile"><i class="fas fa-user-circle"></i></a>
   </footer>
 
   <script>

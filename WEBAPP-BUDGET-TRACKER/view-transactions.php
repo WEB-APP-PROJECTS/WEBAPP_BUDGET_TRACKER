@@ -1,5 +1,6 @@
 <?php
 session_start();
+require 'connection.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: index.php?error=Please+log+in+first");
@@ -146,10 +147,10 @@ $result = $stmt->get_result();
         </table>
     </div>
     <footer class="nav-bar">
-  <a href="home.html"            title="Home"><i class="fas fa-home"></i></a>
-  <a href="add_transaction.html" title="Add Transaction"><i class="fas fa-plus-circle"></i></a>
-  <a href="view-transactions.php" title="View Transactions"><i class="fas fa-receipt"></i></a>
-  <a href="profile.html"         title="User Profile"><i class="fas fa-user-circle"></i></a>
+  <a href="homepage.php" title="Home"><i class="fas fa-home"></i></a>
+    <a href="Add_Transactions.html" title="Add Transaction"><i class="fas fa-plus-circle"></i></a>
+    <a href="view-transactions.php" title="View Transactions"><i class="fas fa-receipt"></i></a>
+    <a href="profile.html" title="User Profile"><i class="fas fa-user-circle"></i></a>
 </footer>
 
 </body>

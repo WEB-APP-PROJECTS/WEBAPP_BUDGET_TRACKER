@@ -1,5 +1,6 @@
 <?php
 session_start();
+require 'connection.php';
 
 $conn = new mysqli("localhost", "root", "", "budgettracker");
 if ($conn->connect_error) die("DB error");

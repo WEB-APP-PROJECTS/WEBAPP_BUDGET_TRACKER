@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 session_start();
+require 'connection.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {

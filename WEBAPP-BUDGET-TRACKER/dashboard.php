@@ -1,6 +1,7 @@
 <?php
 // dashboard.php
 session_start();
+require 'connection.php';
 
 if (empty($_SESSION['user_id'])) {
   header("Location: index.php?error=Please+login+first");
