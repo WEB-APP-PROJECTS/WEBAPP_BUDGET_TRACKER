@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 session_start();
-require 'connection.php';
+require 'connection.php'; // $conn (MySQLi)
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -9,20 +9,26 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-// Database connection
-require_once 'db_connection.php';
+$user_id = $_SESSION['user_id'];
 
-try {
-    $stmt = $pdo->prepare("SELECT fullname, email FROM users WHERE id = ?");
-    $stmt->execute([$_SESSION['user_id']]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    if ($user) {
-        echo json_encode(['success' => true, 'user' => $user]);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'User not found']);
-    }
-} catch (PDOException $e) {
-    echo json_encode(['success' => false, 'message' => 'Database error']);
+// Prepare and execute SQL query
+$stmt = $conn->prepare("SELECT username, email FROM users WHERE id = ?");
+if (!$stmt) {
+    error_log("Prepare failed: " . $conn->error);
+    echo json_encode(['success' => false, 'message' => 'Server error']);
+    exit;
 }
+
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+
+$result = $stmt->get_result();
+if ($user = $result->fetch_assoc()) {
+    echo json_encode(['success' => true, 'user' => $user]);
+} else {
+    echo json_encode(['success' => false, 'message' => 'User not found']);
+}
+
+$stmt->close();
+$conn->close();
 ?>

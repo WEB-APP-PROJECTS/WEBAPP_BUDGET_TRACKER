@@ -17,10 +17,10 @@
         <p class="error"><?= htmlspecialchars($_GET['error']) ?></p>
       <?php endif; ?>
 
-      <form action="process_register.php" method="POST" enctype="multipart/form-data">
+      <form action="process_register.php" method="POST">
         <div class="input-box">
-          <input type="text" name="full_name" required />
-          <label>Full Name</label>
+          <input type="text" name="username" required />
+          <label>User Name</label>
         </div>
         <div class="input-box">
           <input type="email" name="email" required />
@@ -34,18 +34,13 @@
           <input type="password" name="confirm_password" required />
           <label>Confirm Password</label>
         </div>
-        <div class="input-box file-box">
-          <input type="file" name="avatar" id="avatar" accept="image/*" />
-          <label for="avatar" class="file-label">
-            <span class="file-button">Choose File</span>
-            <span class="file-name">No file chosen</span>
-          </label>
-        </div>
+
         <button type="submit" class="btn">Signup</button>
         <div class="signup-link">
           <a href="index.php">Already have an account? Login</a>
         </div>
       </form>
-     </div>
+    </div>
+  </div>
 </body>
 </html>

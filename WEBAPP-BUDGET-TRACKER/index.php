@@ -12,13 +12,20 @@
         <div class="login-box">
             <h2>Budget Tracker</h2>
             <h3>Login</h3>
+
+            <?php if (isset($_GET['error'])): ?>
+                <div class="error-message" style="color: red; margin-bottom: 10px; text-align: center;">
+                    <?php echo htmlspecialchars($_GET['error']); ?>
+                </div>
+            <?php endif; ?>
+            
             <form action="login.php" method="POST">
                 <div class="input-box">
-                    <input type="email" required>
+                    <input type="email" name="email" required>
                     <label>Email</label>
                 </div>
                 <div class="input-box">
-                    <input type="password" required>
+                    <input type="password" name="password" required>
                     <label>Password</label>
                 </div>
                 

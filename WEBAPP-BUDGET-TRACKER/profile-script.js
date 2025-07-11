@@ -1,15 +1,18 @@
 // Menu Buttons
-document.getElementById("logout-btn").addEventListener("click", function () {
+document.getElementById("logout-btn")?.addEventListener("click", function () {
     if (confirm("Are you sure you want to log out?"))
-        window.location.href = "Form.html";
+        window.location.href = "index.php";
 });
-document.getElementById("settings-btn").addEventListener("click", function () {
+
+document.getElementById("settings-btn")?.addEventListener("click", function () {
     window.location.href = "settings.html";
 });
-document.getElementById("support-btn").addEventListener("click", function () {
+
+document.getElementById("support-btn")?.addEventListener("click", function () {
     window.location.href = "support.html";
 });
-document.getElementById("details-btn").addEventListener("click", function () {
+
+document.getElementById("details-btn")?.addEventListener("click", function () {
     window.location.href = "profile_details.html";
 });
 
@@ -32,10 +35,10 @@ document.addEventListener("DOMContentLoaded", function () {
             .then((response) => response.json())
             .then((data) => {
                 if (data.success) {
-                    document.getElementById("viewFullname").textContent = data.user.fullname;
+                    document.getElementById("viewUsername").textContent = data.user.username;
                     document.getElementById("viewEmail").textContent = data.user.email;
 
-                    document.getElementById("fullname").value = data.user.fullname;
+                    document.getElementById("username").value = data.user.username;
                     document.getElementById("email").value = data.user.email;
                 } else {
                     alert("Error loading profile: " + data.message);
@@ -58,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function saveProfile(e) {
-        e.preventDefault(); 
+        e.preventDefault();
         const password = document.getElementById("password").value;
         const confirmPassword = document.getElementById("confirmPassword").value;
 

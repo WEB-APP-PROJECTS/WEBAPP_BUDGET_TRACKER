@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 session_start();
-require 'connection.php';
+require 'connection.php'; // should give $conn (MySQLi)
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -9,17 +9,14 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-// Database connection
-require_once 'db_connection.php';
-
-// Get form data
-$fullname = $_POST['fullname'] ?? '';
-$email = $_POST['email'] ?? '';
+$user_id  = $_SESSION['user_id'];
+$username = trim($_POST['username'] ?? '');
+$email    = trim($_POST['email'] ?? '');
 $password = $_POST['password'] ?? '';
 
-// Validate inputs
-if (empty($fullname) || empty($email)) {
-    echo json_encode(['success' => false, 'message' => 'Full name and email are required']);
+// Basic validation
+if (empty($username) || empty($email)) {
+    echo json_encode(['success' => false, 'message' => 'Username and email are required']);
     exit;
 }
 
@@ -28,41 +25,35 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     exit;
 }
 
-try {
-    // Check if email is already taken by another user
-    $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
-    $stmt->execute([$email, $_SESSION['user_id']]);
-    if ($stmt->fetch()) {
-        echo json_encode(['success' => false, 'message' => 'Email already in use']);
-        exit;
-    }
-    
-    // Prepare update query
-    $query = "UPDATE users SET fullname = :fullname, email = :email";
-    $params = [
-        ':fullname' => $fullname,
-        ':email' => $email,
-        ':id' => $_SESSION['user_id']
-    ];
-    
-    // Update password if provided
-    if (!empty($password)) {
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        $query .= ", password = :password";
-        $params[':password'] = $hashedPassword;
-    }
-    
-    $query .= " WHERE id = :id";
-    
-    $stmt = $pdo->prepare($query);
-    $success = $stmt->execute($params);
-    
-    if ($success) {
-        echo json_encode(['success' => true]);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Update failed']);
-    }
-} catch (PDOException $e) {
-    echo json_encode(['success' => false, 'message' => 'Database error']);
+// Check if email already exists for another user
+$stmt = $conn->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
+$stmt->bind_param("si", $email, $user_id);
+$stmt->execute();
+$stmt->store_result();
+
+if ($stmt->num_rows > 0) {
+    $stmt->close();
+    echo json_encode(['success' => false, 'message' => 'Email already in use']);
+    exit;
 }
+$stmt->close();
+
+// Build update query
+if (!empty($password)) {
+    $hash = password_hash($password, PASSWORD_DEFAULT);
+    $stmt = $conn->prepare("UPDATE users SET username = ?, email = ?, password_hash = ? WHERE id = ?");
+    $stmt->bind_param("sssi", $username, $email, $hash, $user_id);
+} else {
+    $stmt = $conn->prepare("UPDATE users SET username = ?, email = ? WHERE id = ?");
+    $stmt->bind_param("ssi", $username, $email, $user_id);
+}
+
+if ($stmt->execute()) {
+    echo json_encode(['success' => true]);
+} else {
+    echo json_encode(['success' => false, 'message' => 'Update failed']);
+}
+
+$stmt->close();
+$conn->close();
 ?>

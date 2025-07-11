@@ -10,9 +10,9 @@
 <body>
   <footer class="nav-bar">
     <a href="homepage.php" title="Home"><i class="fas fa-home"></i></a>
-    <a href="Add_Transactions.html" title="Add Transaction"><i class="fas fa-plus-circle"></i></a>
+    <a href="Add_Transactions.php" title="Add Transaction"><i class="fas fa-plus-circle"></i></a>
     <a href="view-transactions.php" title="View Transactions"><i class="fas fa-receipt"></i></a>
-    <a href="profile.html" title="User Profile"><i class="fas fa-user-circle"></i></a>
+    <a href="profile.php" title="User Profile"><i class="fas fa-user-circle"></i></a>
   </footer>
 
   <div class="ring">
@@ -22,15 +22,13 @@
           <h2>Budget Tracker</h2>
           <h3>Add Transaction</h3>
 
-          <!-- TEXT INPUT for category -->
           <input type="text" name="category" placeholder="Enter Category" required />
-
-          <input type="number" name="amount" placeholder="Amount" required />
-          <input type="text" name="description" placeholder="Description" required />
+          <input type="number" step="0.01" name="amount" placeholder="Amount" required />
+          <input type="text" name="description" placeholder="Description" />
           <input type="date" name="date" required />
 
           <button type="submit">Save</button>
-          <button type="button">Cancel</button>
+          <button type="button" onclick="window.location.href='homepage.php'">Cancel</button>
         </div>
       </form>
     </div>

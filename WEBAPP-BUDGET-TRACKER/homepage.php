@@ -2,52 +2,53 @@
 session_start();
 require 'connection.php';
 
-// You must set this in your login logic
-$user_id = $_SESSION['user_id'] ?? 1; // Fallback to user_id = 1 for testing
-
-// Get budget per category
-$budgetQuery = mysqli_query($conn, "SELECT c.name, b.amount_limit FROM budgets b JOIN categories c ON b.category_id = c.id WHERE b.user_id = $user_id");
-$budgetData = [];
-$budgetLabels = [];
-while ($row = mysqli_fetch_assoc($budgetQuery)) {
-    $budgetLabels[] = $row['name'];
-    $budgetData[] = (float)$row['amount_limit'];
+// If you're using mysqli in connection.php, make sure it returns a mysqli connection:
+$conn = new mysqli("localhost", "root", "", "budget_tracker");
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
 }
 
-// Get expenses per category
-$expensesQuery = mysqli_query($conn, "SELECT c.name, SUM(t.amount) as total FROM transactions t JOIN categories c ON t.category_id = c.id WHERE t.user_id = $user_id GROUP BY c.name");
-$expenseData = [];
-$expenseLabels = [];
-$categoryTotals = [];
-while ($row = mysqli_fetch_assoc($expensesQuery)) {
-    $expenseLabels[] = $row['name'];
-    $expenseData[] = (float)$row['total'];
-    $categoryTotals[$row['name']] = (float)$row['total'];
+$user_id = $_SESSION['user_id'] ?? 1;
+
+// Budget per category
+$budgetQuery = $conn->query("SELECT c.name, b.amount_limit FROM budgets b JOIN categories c ON b.category_id = c.id WHERE b.user_id = $user_id");
+$budgetLabels = $budgetData = [];
+while ($row = $budgetQuery->fetch_assoc()) {
+  $budgetLabels[] = $row['name'];
+  $budgetData[] = (float)$row['amount_limit'];
 }
 
-// Calculate balances
+// Expenses per category
+$expensesQuery = $conn->query("SELECT c.name, SUM(t.amount) AS total FROM transactions t JOIN categories c ON t.category_id = c.id WHERE t.user_id = $user_id GROUP BY c.name");
+$expenseLabels = $expenseData = $categoryTotals = [];
+while ($row = $expensesQuery->fetch_assoc()) {
+  $expenseLabels[] = $row['name'];
+  $expenseData[] = (float)$row['total'];
+  $categoryTotals[$row['name']] = (float)$row['total'];
+}
+
+// Balance calculation
 $balanceData = [];
-foreach ($budgetLabels as $index => $name) {
-    $budget = $budgetData[$index];
-    $spent = $categoryTotals[$name] ?? 0;
-    $balanceData[] = $budget - $spent;
+foreach ($budgetLabels as $i => $name) {
+  $budget = $budgetData[$i];
+  $spent = $categoryTotals[$name] ?? 0;
+  $balanceData[] = $budget - $spent;
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Budget Tracker | Home</title>
-  <link rel="stylesheet" href="homepage.css">
+  <link rel="stylesheet" href="homepage.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
   <div class="header">
-    <div class="left">Hello, <?php echo $_SESSION['username'] ?? 'Username'; ?>!</div>
+      <div class="left">Hello, <?php echo $_SESSION['name'] ?? 'User'; ?>!</div>
     <div class="right">
       <a href="budgets.php"><button class="btn">View Budget</button></a>
       <a href="logout.php"><button class="btn">Logout</button></a>
@@ -74,31 +75,31 @@ foreach ($budgetLabels as $index => $name) {
   </div>
 
   <div class="create-budget-btn">
-    <a href="budgets.php"><button class="btn">Create Budget</button></a>
+    <a href="budget.html"><button class="btn">Create Budget</button></a>
   </div>
 
   <footer class="nav-bar">
-    <a href="homepage.php" title="Home"><i class="fas fa-home"></i></a>
-    <a href="Add_Transactions.html" title="Add Transaction"><i class="fas fa-plus-circle"></i></a>
-    <a href="view-transactions.php" title="View Transactions"><i class="fas fa-receipt"></i></a>
-    <a href="profile.html" title="User Profile"><i class="fas fa-user-circle"></i></a>
+    <a href="homepage.php"><i class="fas fa-home"></i></a>
+    <a href="Add_Transactions.php"><i class="fas fa-plus-circle"></i></a>
+    <a href="view-transactions.php"><i class="fas fa-receipt"></i></a>
+    <a href="profile.php"><i class="fas fa-user-circle"></i></a>
   </footer>
 
   <script>
     const budgetData = {
-      labels: <?php echo json_encode($category_id); ?>,
+      labels: <?php echo json_encode($budgetLabels); ?>,
       datasets: [{
         label: 'Budget',
-        data: <?php echo json_encode($balance); ?>,
+        data: <?php echo json_encode($budgetData); ?>,
         backgroundColor: ['#9534db', '#ff6384', '#f3ea46', '#ffcd56', '#4bc0c0']
       }]
     };
 
     const expensesData = {
-      labels: <?php echo json_encode($category_id); ?>,
+      labels: <?php echo json_encode($expenseLabels); ?>,
       datasets: [{
         label: 'Expenses',
-        data: <?php echo json_encode($amount); ?>,
+        data: <?php echo json_encode($expenseData); ?>,
         backgroundColor: ['#9534db', '#ff6384', '#f3ea46', '#ffcd56', '#4bc0c0']
       }]
     };

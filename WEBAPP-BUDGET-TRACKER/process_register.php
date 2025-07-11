@@ -1,68 +1,100 @@
 <?php
 session_start();
-require 'connection.php';
-$conn = new mysqli("localhost", "root", "", "budgettracker");
-if ($conn->connect_error) die("DB connection failed");
 
-$full_name        = trim($_POST['full_name'] ?? '');
+$conn = new mysqli("localhost", "root", "", "budget_tracker");
+if ($conn->connect_error) {
+    error_log("Database connection failed: " . $conn->connect_error);
+    die("Database connection failed. Please try again later.");
+}
+
+// Input validation and sanitization
+$username        = trim($_POST['username'] ?? '');
 $email            = trim($_POST['email'] ?? '');
 $password         = $_POST['password'] ?? '';
 $confirm_password = $_POST['confirm_password'] ?? '';
 
-if (!$full_name || !$email || !$password) {
-    header("Location: signup.php?error=All+fields+except+avatar+are+required");
+// Validate required fields
+if (!$username || !$email || !$password) {
+    header("Location: index.php?error=" . urlencode("All fields are required"));
     exit;
 }
 
+// Validate email format
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    header("Location: index.php?error=" . urlencode("Invalid email format"));
+    exit;
+}
+
+// Password confirmation check
 if ($password !== $confirm_password) {
-    header("Location: signup.php?error=Passwords+do+not+match");
+    header("Location: index.php?error=" . urlencode("Passwords do not match"));
     exit;
 }
 
+// Password strength validation
+if (strlen($password) < 8) {
+    header("Location: index.php?error=" . urlencode("Password must be at least 8 characters long"));
+    exit;
+}
+
+// Check for existing email
 $stmt = $conn->prepare("SELECT id FROM users WHERE email = ? LIMIT 1");
+if (!$stmt) {
+    error_log("Prepare failed: " . $conn->error);
+    header("Location: index.php?error=" . urlencode("Registration failed. Please try again."));
+    exit;
+}
+
 $stmt->bind_param("s", $email);
 $stmt->execute();
 $stmt->store_result();
 
 if ($stmt->num_rows > 0) {
-    header("Location: signup.php?error=Email+already+taken");
+    $stmt->close();
+    header("Location: index.php?error=" . urlencode("Email already taken"));
     exit;
 }
 $stmt->close();
 
-$avatar_url = null;
-if (!empty($_FILES['avatar']['name'])) {
-    $allowed = ['image/png', 'image/jpeg', 'image/gif'];
-    if (in_array($_FILES['avatar']['type'], $allowed)) {
-        $ext      = pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION);
-        $newName  = uniqid('avatar_') . '.' . $ext;
-        $destDir  = __DIR__ . '/uploads/avatars/';
-        if (!is_dir($destDir)) mkdir($destDir, 0755, true);
-        $destPath = $destDir . $newName;
-        if (move_uploaded_file($_FILES['avatar']['tmp_name'], $destPath)) {
-            $avatar_url = 'uploads/avatars/' . $newName;
-        }
-    }
+// Hash password securely
+$hash = password_hash($password, PASSWORD_DEFAULT);
+$role = 'user'; // Matches your database schema
+
+// Insert new user with existing database structure
+$stmt = $conn->prepare(
+    "INSERT INTO users (username, email, password_hash, role)
+     VALUES (?, ?, ?, ?)"
+);
+
+if (!$stmt) {
+    error_log("Prepare failed: " . $conn->error);
+    header("Location: signup.php?error=" . urlencode("Prepare failed: " . $conn->error));
+    exit;
 }
 
-$hash = password_hash($password, PASSWORD_DEFAULT);
-$role = 'normal'; 
+$stmt->bind_param("ssss", $username, $email, $hash, $role);
 
-$stmt = $conn->prepare(
-    "INSERT INTO users (full_name, email, password_hash, avatar_url, user_type)
-     VALUES (?, ?, ?, ?, ?)"
-);
-$stmt->bind_param("sssss", $full_name, $email, $hash, $avatar_url, $role);
+error_log("Parameters bound successfully, executing...");
 
 if ($stmt->execute()) {
+    // Set session variables
     $_SESSION['user_id']    = $stmt->insert_id;
-    $_SESSION['name']       = $full_name;
-    $_SESSION['avatar_url'] = $avatar_url;
-    $_SESSION['user_type']  = $role;
+    $_SESSION['username']       = $username;  // Fixed: use $username instead of undefined $full_name
+    $_SESSION['role']       = $role;
 
-    header("Location: dashboard.php");
+    // Regenerate session ID for security
+    session_regenerate_id(true);
+
+    $stmt->close();
+    $conn->close();
+
+    header("Location: homepage.php");
     exit;
 } else {
-    header("Location: signup.php?error=Registration+failed");
+    $error_msg = "Execute failed: " . $stmt->error . " | MySQL Error: " . $conn->error . " | Errno: " . $conn->errno;
+    error_log($error_msg);
+    $stmt->close();
+    header("Location: signup.php?error=" . urlencode($error_msg));
     exit;
 }
+?>

@@ -2,15 +2,22 @@
 session_start();
 require 'connection.php';
 
-if (!isset($_SESSION['admin_logged_in'])) {
-    header("Location: admin_login.php");
+
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    header("Location: index.php");
     exit();
 }
 
 // Queries
-$users = mysqli_query($conn, "SELECT id, fullname, email FROM users WHERE role = 'user'");
+$users = mysqli_query($conn, "SELECT id, username, email FROM users WHERE role = 'user'");
+if (!$users) {
+    die("Query failed: " . mysqli_error($conn));
+}
+
 $categories = mysqli_query($conn, "SELECT * FROM categories");
-// $feedback = mysqli_query($conn, "SELECT f.message, u.username FROM feedback f JOIN users u ON f.user_id = u.id");
+if (!$categories) {
+    die("Query failed: " . mysqli_error($conn));
+}
 ?>
 
 <!DOCTYPE html>
@@ -18,15 +25,15 @@ $categories = mysqli_query($conn, "SELECT * FROM categories");
 <head>
     <meta charset="UTF-8">
     <title>Admin Dashboard</title>
-    <link rel = "stylesheet" href = "admin_style.css">
+    <link rel="stylesheet" href="admin_style.css">
 </head>
 <body>
 
 <div class="admin-header">
-  <div class="welcome-text">Welcome, <?= $_SESSION['admin_name'] ?></div>
+  <div class="welcome-text">Welcome, <?= htmlspecialchars($_SESSION['username']) ?></div>
   <div class="admin-buttons">
     <a href="admin_categories.php" class="btn">Manage Categories</a>
-    <a href="admin_logout.php" class="btn">Logout</a>
+    <a href="index.php" class="btn">Logout</a>
   </div>
 </div>
 
@@ -35,14 +42,14 @@ $categories = mysqli_query($conn, "SELECT * FROM categories");
     <table>
         <tr>
             <th>ID</th>
-            <th>Full Name</th>
+            <th>Username</th>
             <th>Email</th>
         </tr>
         <?php while ($row = mysqli_fetch_assoc($users)): ?>
             <tr>
-                <td><?= $row['id'] ?></td>
-                <td><?= $row['fullname'] ?></td>
-                <td><?= $row['email'] ?></td>
+                <td><?= htmlspecialchars($row['id']) ?></td>
+                <td><?= htmlspecialchars($row['username']) ?></td>
+                <td><?= htmlspecialchars($row['email']) ?></td>
             </tr>
         <?php endwhile; ?>
     </table>
@@ -57,28 +64,12 @@ $categories = mysqli_query($conn, "SELECT * FROM categories");
         </tr>
         <?php while ($row = mysqli_fetch_assoc($categories)): ?>
             <tr>
-                <td><?= $row['id'] ?></td>
-                <td><?= $row['name'] ?></td>
+                <td><?= htmlspecialchars($row['id']) ?></td>
+                <td><?= htmlspecialchars($row['name']) ?></td>
             </tr>
         <?php endwhile; ?>
     </table>
 </div>
-
-<!-- <div class="section">
-    <h2>User Feedback</h2>
-    <table>
-        <tr>
-            <th>User</th>
-            <th>Message</th>
-        </tr>
-        <?php while ($row = mysqli_fetch_assoc($feedback)): ?>
-            <tr>
-                <td><?= $row['fullname'] ?></td>
-                <td><?= $row['message'] ?></td>
-            </tr>
-        <?php endwhile; ?>
-    </table>
-</div> -->
 
 </body>
 </html>
