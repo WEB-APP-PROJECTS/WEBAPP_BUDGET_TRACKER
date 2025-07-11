@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Budget Setting</title>
+  <link rel="stylesheet" href="budget.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+
+  <div class="budget-container">
+    <h2>BUDGET</h2>
+
+    <!-- ✅ FORM begins -->
+    <form action="save_budget.php" method="POST">
+      <div class="form-row">
+        <div class="input-box">
+          <label for="start">Start Date</label><br />
+          <input type="date" id="start" name="start_date" required />
+        </div>
+
+        <div class="input-box">
+          <label for="end">End Date</label><br />
+          <input type="date" id="end" name="end_date" required />
+        </div>
+
+        <div class="input-box">
+          <label for="category">Category</label><br />
+          <select id="category" name="category" required>
+            <option value="Food">Food</option>
+            <option value="Transport">Transport</option>
+            <option value="Rent">Rent</option>
+            <option value="Entertainment">Entertainment</option>
+          </select>
+        </div>
+
+        <div class="input-box">
+          <label for="amount">Budget Amount</label><br />
+          <input type="number" id="amount" name="amount" required />
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn" type="submit" name="set_budget">Set Budget</button>
+      </div>
+    </form>
+    <!-- ✅ FORM ends -->
+
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Set Limits</th>
+          <th>Spent So Far</th>
+          <th>Remaining</th>
+          <th>Progress</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Entries can be injected here using PHP later -->
+      </tbody>
+    </table>
+  </div>
+
+  <footer class="nav-bar">
+    <a href="home.html" title="Home"><i class="fas fa-home"></i></a>
+    <a href="add_transaction.html" title="Add Transaction"><i class="fas fa-plus-circle"></i></a>
+    <a href="view_transactions.html" title="View Transactions"><i class="fas fa-receipt"></i></a>
+    <a href="profile.html" title="User Profile"><i class="fas fa-user-circle"></i></a>
+  </footer>
+
+</body>
+</html>

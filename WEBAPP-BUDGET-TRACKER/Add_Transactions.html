@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Transaction</title>
+  <link rel="stylesheet" href="Add_Transactions.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <footer class="nav-bar">
+    <a href="home.html" title="Home"><i class="fas fa-home"></i></a>
+    <a href="add_transaction.html" title="Add Transaction"><i class="fas fa-plus-circle"></i></a>
+    <a href="view_transactions.html" title="View Transactions"><i class="fas fa-receipt"></i></a>
+    <a href="profile.html" title="User Profile"><i class="fas fa-user-circle"></i></a>
+  </footer>
+
+  <div class="ring">
+    <div class="login">
+      <form action="process_transaction.php" method="POST">
+        <div class="form-group">
+          <h2>Budget Tracker</h2>
+          <h3>Add Transaction</h3>
+
+          <!-- TEXT INPUT for category -->
+          <input type="text" name="category" placeholder="Enter Category" required />
+
+          <input type="number" name="amount" placeholder="Amount" required />
+          <input type="text" name="description" placeholder="Description" required />
+          <input type="date" name="date" required />
+
+          <button type="submit">Save</button>
+          <button type="button">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

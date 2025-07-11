@@ -1,0 +1,166 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    min-height: 100vh;
+    background: #1f293a;       /
+    padding: 40px;
+    color: #fff;
+}
+
+/* Main Wrapper */
+.wrapper {
+    width: 100%;
+    max-width: 800px;
+    background: transparent;   /* mirrors login transparency */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px #0ef; /* same glow effect as login */
+}
+
+/* Primary Button (e.g. View Transactions) */
+.btn-primary {
+    width: 100%;
+    height: 45px;
+    background: #0ef;          /* same as .btn in login */
+    color: #1f293a;            /* login .btn text */
+    border: none;
+    border-radius: 40px;       /* same pill shape */
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+/* Filters */
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+.filter-group {
+    flex: 1;
+    min-width: 180px;
+    display: flex;
+    flex-direction: column;
+}
+.filter-group label {
+    color: #fff;
+    margin-bottom: 5px;
+    font-size: .9em;
+}
+.filter-group select,
+.filter-group input[type="date"] {
+    padding: 10px;
+    border: 2px solid #2c4766; /* same default border */
+    border-radius: 40px;       /* match login inputs */
+    background: transparent;   
+    color: #fff;
+    transition: border-color .5s ease;
+}
+.filter-group select:focus,
+.filter-group input[type="date"]:focus {
+    border-color: #0ef;        /* same focus color */
+    outline: none;
+}
+
+/* Transactions Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: transparent;   /* keep transparency */
+    margin-bottom: 20px;
+}
+th, td {
+    padding: 12px;
+    text-align: center;
+    border: 2px solid #2c4766; /* match input border */
+}
+th {
+    background: #0ef;          /* same accent */
+    color: #1f293a;            /* accent text */
+    font-size: 1em;
+}
+tr:nth-child(even) {
+    background: #2c4766;       /* same span background */
+}
+tr:nth-child(odd) {
+    background: transparent;
+}
+
+/* Inline Edit Inputs */
+input[type="number"],
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #2c4766;
+    border-radius: 40px;
+    background: transparent;
+    color: #fff;
+    font-size: 1em;
+    transition: border-color .5s ease;
+}
+input[type="number"]:focus,
+input[type="text"]:focus {
+    border-color: #0ef;
+    outline: none;
+}
+
+/* Action Buttons (Save / Delete) */
+.action-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 40px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 2px;
+}
+.action-btn.save-btn {
+    background: #0ef;
+    color: #1f293a;
+}
+.action-btn.delete-btn {
+    background: #2c4766;
+    color: #fff;
+}
+.action-btn:hover {
+    opacity: 0.9;
+}
+
+/*Nav bar*/
+
+.nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #0d1b2a; 
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 12px 0;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+}
+
+.nav-bar a {
+  color: #0ef;
+  text-decoration: none;
+  font-size: 24px;
+  transition: color 0.3s ease;
+}
+
+.nav-bar a:hover {
+  color: #ffffff;
+}

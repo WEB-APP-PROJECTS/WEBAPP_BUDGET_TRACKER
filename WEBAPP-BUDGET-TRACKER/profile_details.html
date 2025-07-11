@@ -1,0 +1,63 @@
+<html>
+    <head>
+        <title>Profile Details</title>
+        <link rel="stylesheet" href="profile.css">
+         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    </head>
+    <body>
+        
+
+        <div class="profile-section">
+            <div id="viewMode " class=" view-mode">
+                <h2>Profile Details</h2>
+                <p><strong>FullName:</strong><span id="viewFullName"></span></p>
+                <p><strong>Email:</strong><span id="viewEmail"></span></p>
+                <button id="editBtn">Edit Profile</button>
+            </div>
+
+            <div id="editMode" class="edit-mode hidden">
+                <h2>Edit Profile</h2>
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label for="fullName">Full Name:</label>
+                        <input type="text" id="fullName" name="fullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">New Password:</label>
+                        <input type="password" id="password" name="password" placeholder="Leave blank to keep current password">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password:</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Leave blank to keep current password">
+                    </div>
+
+                    <button type="submit">Save Changes</button>
+                    <button type="button" id="cancelBtn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <script src="profile_details.js"></script>
+
+        <footer class="nav-bar">
+  <a href="home.html" title="Home">
+    <i class="fas fa-home"></i>
+  </a>
+  <a href="add_transaction.html" title="Add Transaction">
+    <i class="fas fa-plus-circle"></i>
+  </a>
+  <a href="view_transactions.html" title="View Transactions">
+    <i class="fas fa-receipt"></i>
+  </a>
+  <a href="profile.html" title="User Profile">
+    <i class="fas fa-user-circle"></i>
+  </a>
+</footer>
+    </body>
+</html>
