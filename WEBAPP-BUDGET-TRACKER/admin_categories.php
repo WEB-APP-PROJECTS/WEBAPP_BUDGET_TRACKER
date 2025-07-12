@@ -7,76 +7,57 @@ if (!isset($_SESSION['admin_logged_in'])) {
     exit();
 }
 
-// Add Category
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_category'])) {
-    $name = $_POST['name'];
-    $type = $_POST['type'];
-    $query = "INSERT INTO categories (name, type, user_id) VALUES (?, ?, 0)";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("ss", $name, $type);
-    $stmt->execute();
-}
+// Join transactions, users, and categories to get all needed info
+$query = "
+    SELECT t.id as transaction_id, u.username, c.name AS category_name, t.amount, t.description, t.date
+    FROM transactions t
+    JOIN users u ON t.user_id = u.id
+    JOIN categories c ON t.category_id = c.id
+    ORDER BY t.date DESC
+";
 
-// Delete Category
-if (isset($_GET['delete'])) {
-    $id = $_GET['delete'];
-    $stmt = $conn->prepare("DELETE FROM categories WHERE id = ? AND user_id = 0");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-}
-
-$categories = mysqli_query($conn, "SELECT * FROM categories WHERE user_id = 0");
+$result = $conn->query($query);
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Admin Categories</title>
-    <link rel="stylesheet" href="admin_style.css">
+<meta charset="UTF-8" />
+<title>Admin Categories & Transactions</title>
+<link rel="stylesheet" href="admin_style.css" />
+<style>
+    table { border-collapse: collapse; width: 95%; margin: 20px auto; }
+    th, td { border: 1px solid #ddd; padding: 8px; }
+    th { background-color: #f2f2f2; }
+</style>
 </head>
 <body>
+<h2 style="text-align:center;">All User Transactions</h2>
 
-<div class="admin-header">
-    <div class="left">Hello,<?= $_SESSION['admin_name'] ?></div>
-    <div class="admin-buttons">
-        <a href="admin_dashboard.php"><button class="btn">Dashboard</button></a>
-        <a href="admin_logout.php"><button class="btn">Logout</button></a>
-    </div>
-</div>
-
-<h2>Manage Global Categories</h2>
-
-<div class="create-budget-btn">
-    <form method="POST" class="category-form">
-        <input type="text" name="name" placeholder="Category Name" required>
-        <select name="type" required>
-            <option value="income">Income</option>
-            <option value="expense">Expense</option>
-        </select>
-        <button type="submit" name="add_category" class="btn">Add Category</button>
-    </form>
-</div>
-
-<div class="section">
-    <h3>Current Categories</h3>
-    <table>
+<table>
+    <thead>
         <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Action</th>
+            <th>Transaction ID</th>
+            <th>Username</th>
+            <th>Category</th>
+            <th>Amount</th>
+            <th>Description</th>
+            <th>Date</th>
         </tr>
-        <?php while ($row = mysqli_fetch_assoc($categories)): ?>
+    </thead>
+    <tbody>
+        <?php while($row = $result->fetch_assoc()): ?>
         <tr>
-            <td><?= $row['id'] ?></td>
-            <td><?= $row['name'] ?></td>
-            <td><?= ucfirst($row['type']) ?></td>
-            <td><a href="?delete=<?= $row['id'] ?>" onclick="return confirm('Are you sure?')">Delete</a></td>
+            <td><?= htmlspecialchars($row['transaction_id']) ?></td>
+            <td><?= htmlspecialchars($row['username']) ?></td>
+            <td><?= htmlspecialchars($row['category_name']) ?></td>
+            <td><?= htmlspecialchars($row['amount']) ?></td>
+            <td><?= htmlspecialchars($row['description']) ?></td>
+            <td><?= htmlspecialchars($row['date']) ?></td>
         </tr>
         <?php endwhile; ?>
-    </table>
-</div>
+    </tbody>
+</table>
 
 </body>
 </html>
