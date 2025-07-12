@@ -48,7 +48,7 @@ $categories = mysqli_query($conn, "SELECT * FROM categories");
 <div class="admin-header">
     <div class="welcome-text">Welcome, <?= htmlspecialchars($_SESSION['admin_name']) ?></div>
     <div class="admin-buttons">
-        <a href="admin_categories.php" class="btn">User Transactions</a>
+        <a href="admin_transactions.php" class="btn">User Transactions</a>
         <button id="manageUsersBtn" class="btn">Manage Users</button>
         <a href="logout.php" class="btn">Logout</a>
     </div>
