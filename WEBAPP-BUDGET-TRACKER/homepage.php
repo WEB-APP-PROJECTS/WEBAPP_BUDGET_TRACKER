@@ -48,9 +48,9 @@ foreach ($budgetLabels as $i => $name) {
 <body>
 
   <div class="header">
-      <div class="left">Hello, <?php echo $_SESSION['name'] ?? 'User'; ?>!</div>
+      <div class="left">Hello, <?php echo $_SESSION['username'] ?? 'User'; ?>!</div>
     <div class="right">
-      <a href="budgets.php"><button class="btn">View Budget</button></a>
+      <a href="budget.html"><button class="btn">View Budget</button></a>
       <a href="logout.php"><button class="btn">Logout</button></a>
     </div>
   </div>
